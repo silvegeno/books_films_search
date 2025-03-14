@@ -5,6 +5,7 @@ Versions/
 *.xlsx
 books_films_search/
 lesson_3_10/
+lessons/
 telegram-bot-stepik/
 Versions
 authorized_users.json

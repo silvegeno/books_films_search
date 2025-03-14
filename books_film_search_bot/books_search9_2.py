@@ -1,3 +1,11 @@
+# Телеграм бот для поиска книг и фильмов под настроение.#
+# Для запуска используется файл "books_search9_2.py".
+# # Бот задает 5 вопросов пользователю и подбирает с помощью ChatGPT книгу и фильм под текущее настроение пользователя.
+# # После получения рекомендаций можно:
+# просмотреть историю рекомендаций;
+# еще раз попросить рекомендовать книгу и фильм;
+# заново ответить на вопросы и получить рекомендации по книге и фильму.
+
 import asyncio, os  # Асинхронная работа бота и система
 import logging  # Логирование работы бота
 from openai import OpenAI  # Добавляем библиотеку OpenAI
@@ -158,7 +166,7 @@ async def ask_question(user_id, question_index):
 
 
 # Обработчик ответов пользователя на вопросы теста.
-# обработчик вызывается только для callback_data в формате число_число
+# Обработчик вызывается только для callback_data в формате число_число
 @dp.callback_query(lambda c: c.data and "_" in c.data and c.data.split("_")[0].isdigit())
 async def handle_answer(callback: types.CallbackQuery):
     user_id = callback.from_user.id
@@ -167,7 +175,6 @@ async def handle_answer(callback: types.CallbackQuery):
     user_answers.setdefault(user_id, []).append(
         f"{question_index + 1}: '{['Сейчас настроение: ', 'Посмотрю фильм: ', 'Привлекает в книгах: ', 'Мне хочется: ', 'Новое или классика: '][question_index]}{questions[question_index][1][answer_index]}'")
     await callback.message.delete()
-
     await ask_question(user_id, question_index + 1)
 
 
@@ -242,7 +249,7 @@ async def analyze_results(user_id, exclude_books_titles, exclude_films_titles):
         # Добавляем текущий результат в историю
         user_search_history[user_id].append(extracted_info)
 
-        # Отправляем данные пользователя админстратору
+        # Отправляем данные пользователя администратору
         current_date = datetime.now().strftime("%Y-%m-%d")
         user_no, username, user_first_name, user_last_name = load_user_func(db_path, user_id)
         await bot.send_message(admin_id, f"{current_date}, {user_no} {username}, ФИО: {user_first_name}, {user_last_name}. Найдено: {extracted_info}")
